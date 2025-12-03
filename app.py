@@ -160,7 +160,9 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-# メインブロックはそのままサーバー起動
+import os
+
 if __name__ == "__main__":
-    # debug=Trueで開発モード起動
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render が指定するポートを取得
+    app.run(host="0.0.0.0", port=port, debug=True)  # 外部アクセス可能に
+
