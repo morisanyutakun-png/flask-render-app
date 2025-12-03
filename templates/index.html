@@ -240,62 +240,116 @@
         <textarea name="tone_keywords" placeholder="例：初心者でも理解できる優しい表現"></textarea>
     </div>
 
-    <!-- 段落見出しのテンプレート -->
+<!-- 段落テンプレート -->
 <div class="section">
-    <h2>段落見出しのテンプレート（任意：見出し指定・追加可）</h2>
+    <h2>段落テンプレート（ドラッグ＆自由編集対応）</h2>
 
-    <label>テンプレート選択:</label>
-<select name="article_headings_template" onchange="toggleOther(this,'article_headings_custom')">
+<label>テンプレート選択:</label>
+<select id="template_select" name="article_headings_template">
     <option value="" selected>選択なし</option>
-
-    <!-- HowTo型 -->
-    <option value="ステップ1：問題提示→ステップ2：背景説明→ステップ3：現状分析→ステップ4：目標設定→ステップ5：準備→ステップ6：実践手順1→ステップ7：実践手順2→ステップ8：実践手順3→ステップ9：追加応用→ステップ10：注意点→ステップ11：効果→ステップ12：まとめとCTA">
-        HowTo型（課題→手順→実践）
-    </option>
-
-    <!-- 分析型 -->
-    <option value="ステップ1：問題提起→ステップ2：現状分析→ステップ3：課題整理→ステップ4：具体例→ステップ5：解決策→ステップ6：手順1→ステップ7：手順2→ステップ8：手順3→ステップ9：注意点→ステップ10：効果→ステップ11：まとめ→ステップ12：次の行動">
-        分析型（現状→課題→手順）
-    </option>
-
-    <!-- 実践型 -->
-    <option value="ステップ1：導入→ステップ2：課題認識→ステップ3：実践例→ステップ4：分析→ステップ5：学び→ステップ6：改善→ステップ7：まとめ→ステップ8：CTA">
-        実践型（自由→実践→まとめ）
-    </option>
-
-    <!-- 成果型 -->
-    <option value="ステップ1：導入→ステップ2：問題提起→ステップ3：方法提示→ステップ4：具体例→ステップ5：実践→ステップ6：応用→ステップ7：注意点→ステップ8：まとめ→ステップ9：次のステップ→ステップ10：CTA">
-        成果型（導入→方法→応用）
-    </option>
-
-    <!-- 読者共感型 -->
-    <option value="ステップ1：きっかけ→ステップ2：経験談→ステップ3：問題直面→ステップ4：試行錯誤→ステップ5：実践内容→ステップ6：結果→ステップ7：学び→ステップ8：今後の活かし方→ステップ9：注意点→ステップ10：まとめ→ステップ11：CTA">
-        読者共感型（きっかけ→経験→まとめ）
-    </option>
-
-    <option value="その他">その他</option>
+    <option value="howto">HowTo型 - 課題提示 → 手順 → 実践</option>
+    <option value="analysis">分析型 - 現状分析 → 課題整理 → 解決策提示</option>
+    <option value="practice">実践型 - 導入 → 実践例 → 学び・改善</option>
+    <option value="result">成果型 - 方法提示 → 実践 → 応用・まとめ</option>
+    <option value="empathy">共感型 - きっかけ・経験 → 試行錯誤 → 結果・学び</option>
+    <option value="other">空テンプレ - 自由にステップを追加可能</option>
 </select>
 
-    </select>
+    <p style="font-size:13px;color:#555;">テンプレを選ぶとステップが自動追加されます。</p>
 
-    <div id="article_headings_custom" class="hidden">
-        <div id="headings_container">
-            <input type="text" name="article_headings[]" placeholder="段落見出しを入力">
-        </div>
-        <button type="button" onclick="addHeading()">＋追加</button>
-    </div>
+    <div id="steps_container"></div>
+
+    <button type="button" id="add_step_btn" style="margin-top:15px;">＋ ステップを追加（入力補助付き）</button>
 </div>
 
+<!-- SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
 <script>
-function addHeading() {
-    const container = document.getElementById("headings_container");
-    const input = document.createElement("input");
-    input.type = "text";
-    input.name = "article_headings[]";
-    input.placeholder = "段落見出しを入力";
-    container.appendChild(input);
+// ステップテンプレート
+const stepTemplates = {
+    howto: ["問題提示","背景説明","現状分析","目標設定","準備","実践手順1","実践手順2","実践手順3","追加応用","注意点","効果","まとめとCTA"],
+    analysis: ["問題提起","現状分析","課題整理","具体例","解決策","手順1","手順2","手順3","注意点","効果","まとめ","次の行動"],
+    practice: ["導入","課題認識","実践例","分析","学び","改善","まとめ","CTA"],
+    result: ["導入","問題提起","方法提示","具体例","実践","応用","注意点","まとめ","次のステップ","CTA"],
+    empathy: ["きっかけ","経験談","問題直面","試行錯誤","実践内容","結果","学び","今後の活かし方","注意点","まとめ","CTA"],
+    other: []
+};
+
+// ステップ補助リスト（入力補助）
+const stepOptions = [
+    "問題提示","背景説明","現状分析","目標設定","準備","実践手順1","実践手順2","実践手順3",
+    "追加応用","注意点","効果","まとめとCTA",
+    "問題提起","課題整理","具体例","解決策","手順1","手順2","手順3",
+    "導入","課題認識","実践例","分析","学び","改善","CTA",
+    "方法提示","実践","応用","次のステップ",
+    "きっかけ","経験談","問題直面","試行錯誤","実践内容","結果","今後の活かし方"
+];
+
+// DOM
+const templateSelect = document.getElementById("template_select");
+const stepsContainer = document.getElementById("steps_container");
+const addStepBtn = document.getElementById("add_step_btn");
+
+// テンプレ選択
+templateSelect.addEventListener("change", function() {
+    const type = this.value;
+    if (!type) return;
+    stepsContainer.innerHTML = "";
+    stepTemplates[type].forEach(step => addStep(step));
+});
+
+// ステップ追加
+addStepBtn.onclick = () => addStep("");
+
+// ステップ追加関数（入力欄＋補完）
+function addStep(prefill = "") {
+    const div = document.createElement("div");
+    div.className = "step-item";
+    div.style.display = "flex";
+    div.style.alignItems = "center";
+    div.style.border = "1px solid #ddd";
+    div.style.padding = "10px";
+    div.style.margin = "10px 0";
+    div.style.borderRadius = "5px";
+    div.style.background = "#fafafa";
+    div.style.gap = "5px"; // 入力欄とボタンの間隔
+
+    // datalist を使って入力補助
+    const datalistId = "step_list_" + Math.random().toString(36).substring(2,8);
+
+    div.innerHTML = `
+        <input type="text" class="step_title" name="article_headings[]" list="${datalistId}" placeholder="ステップタイトル" value="${prefill}" style="flex:1; padding:5px;">
+        <datalist id="${datalistId}">
+            ${stepOptions.map(opt => `<option value="${opt}">`).join("")}
+        </datalist>
+        <button type="button" class="remove-step" style="
+            background-color:#f44336;
+            color:white;
+            border:none;
+            border-radius:3px;
+            padding:4px 8px;
+            cursor:pointer;
+            font-size:14px;
+        ">削除</button>
+    `;
+
+    // 削除ボタン
+    div.querySelector(".remove-step").onclick = () => div.remove();
+
+    stepsContainer.appendChild(div);
 }
+
+
+
+// ドラッグ並び替え
+Sortable.create(stepsContainer, {
+    animation: 150,
+    handle: ".step-item",
+});
 </script>
+
+
 
    <!-- 文字量（必須） -->
 <div class="section">

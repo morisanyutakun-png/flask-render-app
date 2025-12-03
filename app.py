@@ -107,7 +107,7 @@ note記事として読者に価値ある記事を**段落ごとに順番に生�
 - 著者名: {author_name}
 
 【記事の大まかな流れ】
-- 全体の流れ: {article_headings_template if article_headings_template else "指定なし"}
+- 全体の流れ: {', '.join(article_headings) if article_headings else "指定なし"}
 
 【補助情報】
 - 文字量: {constraint_length}
