@@ -1,0 +1,187 @@
+/* ===== 全体設定 ===== */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+/* ===== 見出し ===== */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+/* ===== セクション ===== */
+.section {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* ===== ラベル ===== */
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* ===== 必須項目 ===== */
+.required {
+    color: red;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+/* ===== 注釈 ===== */
+span.note {
+    font-weight: normal;
+    font-size: 0.85em;
+    color: #888;
+    margin-left: 5px;
+}
+
+/* ===== テキスト入力・テキストエリア・セレクト ===== */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    outline: none;
+}
+
+/* ===== 必須入力の背景ハイライト ===== */
+input:required,
+select:required,
+textarea:required {
+    background-color: #fff8f8; /* 薄い赤背景で必須を視覚化 */
+}
+
+/* ===== ボタン ===== */
+button {
+    background-color: #3498db;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    display: block;
+    margin: 20px auto 0 auto;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.03);
+}
+
+/* ===== テキストエリア結果 ===== */
+textarea.result {
+    width: 100%;
+    height: 400px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* ===== リンク ===== */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== その他入力欄 ===== */
+.hidden {
+    display: none;
+    margin-top: 5px;
+}
+
+/* 「その他」選択時の入力欄スタイル */
+input.other-input {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 8px 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    font-size: 14px;
+}
+
+
+/* チェックボックスを見やすくする */
+.checkbox-card {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border: 1px solid #3498db;
+    border-radius: 8px;
+    background-color: #eaf4fc;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.checkbox-card input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.checkbox-card label {
+    font-weight: bold;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+.checkbox-card:hover {
+    background-color: #d4ebfb;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ===== スマホ対応 ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .section {
+        padding: 15px;
+    }
+    button {
+        width: 100%;
+    }
+}

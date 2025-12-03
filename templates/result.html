@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>生成されたプロンプト</title>
+    <!-- 外部CSS読み込み -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>ChatGPT用プロンプト</h1>
+    <textarea style="width: 100%; height: 600px;">{{ prompt }}</textarea>
+    <br><br>
+    <a href="/">戻る</a>
+</body>
+</html>
