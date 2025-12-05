@@ -35,7 +35,7 @@
     </script>
 </head>
 <body>
-<h1>note プロンプト自動生成フォーム</h1>
+<h1>note プロンプト自動生成フォーム（その他自由記述）</h1>
 <form method="post">
 
        <!-- 著者の環境・アピールポイント -->
@@ -69,8 +69,8 @@
         </div>
 
         <!-- 著者名 -->
-        <h2>著者名<span class="required">必須</span></h2>
-        <input type="text" id="author_name" name="author_name" placeholder="例: Taro" required>
+        <h2>著者名</h2>
+        <input type="text" id="author_name" name="author_name" placeholder="例: Taro">
 
  <!-- 記事に含めるかのチェック -->
 <div class="form-check checkbox-card">
@@ -202,7 +202,7 @@
             <option value="" selected disabled>選択してください</option>
             <option value="情報提供／知識共有">情報提供／知識共有</option>
             <option value="自己表現・思考整理">自己表現・思考整理</option>
-            <option value="副業収益化／販売">副業収益化／販売</option>
+            <option value="副業収益化／販売">副業収益化／有料記事販売</option>
             <option value="ブランディング／信頼構築">ブランディング／信頼構築</option>
             <option value="SNS拡散／拡散狙い">SNS拡散／拡散狙い</option>
             <option value="コミュニティ形成">コミュニティ形成</option>
@@ -244,16 +244,16 @@
 <div class="section">
     <h2>段落テンプレート（ドラッグ＆自由編集対応）</h2>
 
-<label>テンプレート選択:</label>
-<select id="template_select" name="article_headings_template">
-    <option value="" selected>選択なし</option>
-    <option value="howto">HowTo型 - 課題提示 → 手順 → 実践</option>
-    <option value="analysis">分析型 - 現状分析 → 課題整理 → 解決策提示</option>
-    <option value="practice">実践型 - 導入 → 実践例 → 学び・改善</option>
-    <option value="result">成果型 - 方法提示 → 実践 → 応用・まとめ</option>
-    <option value="empathy">共感型 - きっかけ・経験 → 試行錯誤 → 結果・学び</option>
-    <option value="other">空テンプレ - 自由にステップを追加可能</option>
-</select>
+    <label>テンプレート選択:</label>
+    <select id="template_select" name="article_headings_template">
+        <option value="" selected>選択なし</option>
+        <option value="howto">HowTo型 - 課題提示 → 手順 → 実践</option>
+        <option value="analysis">分析型 - 現状分析 → 課題整理 → 解決策提示</option>
+        <option value="practice">実践型 - 導入 → 実践例 → 学び・改善</option>
+        <option value="result">成果型 - 方法提示 → 実践 → 応用・まとめ</option>
+        <option value="empathy">共感型 - きっかけ・経験 → 試行錯誤 → 結果・学び</option>
+        <option value="other">空テンプレ - 自由にステップを追加可能</option>
+    </select>
 
     <p style="font-size:13px;color:#555;">テンプレを選ぶとステップが自動追加されます。</p>
 
@@ -266,88 +266,152 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
-// ステップテンプレート
+// =========================
+// ▼ ステップテンプレート（7〜10段落）
+// =========================
 const stepTemplates = {
-    howto: ["問題提示","背景説明","現状分析","目標設定","準備","実践手順1","実践手順2","実践手順3","追加応用","注意点","効果","まとめとCTA"],
-    analysis: ["問題提起","現状分析","課題整理","具体例","解決策","手順1","手順2","手順3","注意点","効果","まとめ","次の行動"],
-    practice: ["導入","課題認識","実践例","分析","学び","改善","まとめ","CTA"],
+    howto: ["問題提示","背景説明","現状分析","目標設定","準備","実践手順1","実践手順2","効果","まとめ","CTA"],
+    analysis: ["問題提起","現状分析","課題整理","具体例","解決策提示","根拠","実践案","注意点","まとめ","次の行動"],
+    practice: ["導入","課題認識","実践例","分析","学び","改善案","まとめ","CTA"],
     result: ["導入","問題提起","方法提示","具体例","実践","応用","注意点","まとめ","次のステップ","CTA"],
-    empathy: ["きっかけ","経験談","問題直面","試行錯誤","実践内容","結果","学び","今後の活かし方","注意点","まとめ","CTA"],
+    empathy: ["きっかけ","経験談","問題直面","試行錯誤","実践内容","結果","学び","今後の活かし方","まとめ","CTA"],
     other: []
 };
 
-// ステップ補助リスト（入力補助）
-const stepOptions = [
-    "問題提示","背景説明","現状分析","目標設定","準備","実践手順1","実践手順2","実践手順3",
-    "追加応用","注意点","効果","まとめとCTA",
-    "問題提起","課題整理","具体例","解決策","手順1","手順2","手順3",
-    "導入","課題認識","実践例","分析","学び","改善","CTA",
-    "方法提示","実践","応用","次のステップ",
-    "きっかけ","経験談","問題直面","試行錯誤","実践内容","結果","今後の活かし方"
-];
+// =========================
+// ▼ 利用可能な生成手法
+// =========================
+const writingMethods = {
+    story: "ストーリーテリング法（導入→葛藤→解決→結論）",
+    prep: "PREP法（Point→Reason→Example→Point）",
+    aida: "AIDAモデル（Attention→Interest→Desire→Action）",
+    bullet: "具体例・箇条書き（視覚的に整理）"
+};
+
+// =========================
+// ▼ テンプレート別「手法の自動割当」
+// =========================
+const autoMethodMap = {
+    "問題提示": writingMethods.story,
+    "背景説明": writingMethods.story,
+    "現状分析": writingMethods.aida,
+    "目標設定": writingMethods.prep,
+    "準備": writingMethods.bullet,
+    "実践手順1": writingMethods.bullet,
+    "実践手順2": writingMethods.bullet,
+    "効果": writingMethods.aida,
+    "まとめ": writingMethods.prep,
+    "まとめとCTA": writingMethods.prep,
+    "CTA": writingMethods.aida,
+
+    "問題提起": writingMethods.story,
+    "課題整理": writingMethods.prep,
+    "具体例": writingMethods.bullet,
+    "解決策提示": writingMethods.prep,
+    "根拠": writingMethods.prep,
+    "実践案": writingMethods.bullet,
+    "注意点": writingMethods.bullet,
+    "次の行動": writingMethods.aida,
+
+    "導入": writingMethods.story,
+    "課題認識": writingMethods.story,
+    "実践例": writingMethods.bullet,
+    "分析": writingMethods.prep,
+    "学び": writingMethods.prep,
+    "改善案": writingMethods.prep,
+
+    "方法提示": writingMethods.prep,
+    "実践": writingMethods.bullet,
+    "応用": writingMethods.bullet,
+    "次のステップ": writingMethods.aida,
+
+    "きっかけ": writingMethods.story,
+    "経験談": writingMethods.story,
+    "問題直面": writingMethods.story,
+    "試行錯誤": writingMethods.story,
+    "実践内容": writingMethods.bullet,
+    "結果": writingMethods.prep,
+    "今後の活かし方": writingMethods.prep
+};
+
+// =========================
+// ▼ ステップ入力補助候補
+// =========================
+const stepOptions = Object.keys(autoMethodMap);
 
 // DOM
 const templateSelect = document.getElementById("template_select");
 const stepsContainer = document.getElementById("steps_container");
 const addStepBtn = document.getElementById("add_step_btn");
 
-// テンプレ選択
-templateSelect.addEventListener("change", function() {
+// =========================
+// ▼ テンプレ選択時
+// =========================
+templateSelect.addEventListener("change", function () {
+    stepsContainer.innerHTML = "";
     const type = this.value;
     if (!type) return;
-    stepsContainer.innerHTML = "";
-    stepTemplates[type].forEach(step => addStep(step));
+
+    stepTemplates[type].forEach(step => {
+        const autoMethod = autoMethodMap[step] || "";
+        addStep(step, autoMethod);
+    });
 });
 
-// ステップ追加
-addStepBtn.onclick = () => addStep("");
+// =========================
+// ▼ ステップ追加
+// =========================
+addStepBtn.onclick = () => addStep("", "");
 
-// ステップ追加関数（入力欄＋補完）
-function addStep(prefill = "") {
+// =========================
+// ▼ ステップ追加（手法自動セット付き）
+// =========================
+function addStep(prefill = "", method = "") {
     const div = document.createElement("div");
     div.className = "step-item";
     div.style.display = "flex";
-    div.style.alignItems = "center";
-    div.style.border = "1px solid #ddd";
+    div.style.flexWrap = "wrap";
+    div.style.gap = "8px";
     div.style.padding = "10px";
     div.style.margin = "10px 0";
-    div.style.borderRadius = "5px";
+    div.style.border = "1px solid #ddd";
     div.style.background = "#fafafa";
-    div.style.gap = "5px"; // 入力欄とボタンの間隔
+    div.style.borderRadius = "5px";
 
-    // datalist を使って入力補助
-    const datalistId = "step_list_" + Math.random().toString(36).substring(2,8);
+    const datalistId = "step_list_" + Math.random().toString(36).substring(2, 8);
 
     div.innerHTML = `
-        <input type="text" class="step_title" name="article_headings[]" list="${datalistId}" placeholder="ステップタイトル" value="${prefill}" style="flex:1; padding:5px;">
+        <input type="text" 
+            class="step_title" 
+            name="article_headings[]" 
+            list="${datalistId}" 
+            placeholder="ステップタイトル" 
+            value="${prefill}"
+            style="flex:1; padding:5px;">
+
         <datalist id="${datalistId}">
             ${stepOptions.map(opt => `<option value="${opt}">`).join("")}
         </datalist>
-        <button type="button" class="remove-step" style="
-            background-color:#f44336;
-            color:white;
-            border:none;
-            border-radius:3px;
-            padding:4px 8px;
-            cursor:pointer;
-            font-size:14px;
-        ">削除</button>
+
+        <!-- ▼ 自動割当済み手法セレクト -->
+        <select name="article_methods[]" class="method_select" style="padding:5px;">
+            <option value="">手法を選択</option>
+            ${Object.values(writingMethods).map(m => `
+                <option value="${m}" ${method === m ? "selected" : ""}>${m}</option>
+            `).join("")}
+        </select>
+
+        <button type="button" class="remove-step"
+            style="background:#f44336;color:white;border:none;padding:5px 8px;border-radius:3px;">削除</button>
     `;
 
-    // 削除ボタン
     div.querySelector(".remove-step").onclick = () => div.remove();
-
     stepsContainer.appendChild(div);
 }
 
-
-
-// ドラッグ並び替え
-Sortable.create(stepsContainer, {
-    animation: 150,
-    handle: ".step-item",
-});
+Sortable.create(stepsContainer, { animation: 150 });
 </script>
+
 
 
 
@@ -365,6 +429,7 @@ Sortable.create(stepsContainer, {
     </select>
     <p class="note">※記事作成に必須の情報です。未選択では送信できません。</p>
 </div>
+
 
 <!-- 補助情報（任意） -->
 <div class="section">
