@@ -8,8 +8,26 @@
 </head>
 <body>
     <h1>ChatGPT用プロンプト</h1>
-    <textarea style="width: 100%; height: 600px;">{{ prompt }}</textarea>
+    <textarea id="promptText" style="width: 100%; height: 600px;">{{ prompt }}</textarea>
     <br><br>
+<style>
+    .small-button {
+        width: 100px;
+        padding: 5px 10px; /* 高さや内側の余白も調整可能 */
+    }
+</style>
+
+<button class="small-button" onclick="copyText()">コピー</button>
     <a href="/">戻る</a>
+
+    <script>
+        function copyText() {
+            const textarea = document.getElementById("promptText");
+            textarea.select();  // テキストを選択
+            textarea.setSelectionRange(0, 99999); // モバイル対応
+            document.execCommand("copy");  // クリップボードにコピー
+            alert("コピーしました！"); // コピー完了通知
+        }
+    </script>
 </body>
 </html>
