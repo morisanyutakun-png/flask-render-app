@@ -25,11 +25,44 @@ def index():
         persona_goal_select = request.form.get("persona_goal")
         persona_goal = request.form.get("persona_goal_other_input") if persona_goal_select == "その他" else persona_goal_select
 
+        # --- 追加項目 ---
+        persona_level_select = request.form.get("persona_level")
+        persona_level = request.form.get("persona_level_other_input") if persona_level_select == "その他" else persona_level_select
+
+        persona_situation_select = request.form.get("persona_situation")
+        persona_situation = request.form.get("persona_situation_other_input") if persona_situation_select == "その他" else persona_situation_select
+
+        persona_failed_select = request.form.get("persona_failed")
+        persona_failed = request.form.get("persona_failed_other_input") if persona_failed_select == "その他" else persona_failed_select
+
+        persona_fear_select = request.form.get("persona_fear")
+        persona_fear = request.form.get("persona_fear_other_input") if persona_fear_select == "その他" else persona_fear_select
+
+        persona_life_select = request.form.get("persona_life")
+        persona_life = request.form.get("persona_life_other_input") if persona_life_select == "その他" else persona_life_select
+
+        # context にまとめる
+        context["persona"] = {
+            "age": persona_age,
+            "gender": persona_gender,
+            "job": persona_job,
+            "hobby": persona_hobby,
+            "pain": persona_pain,
+            "goal": persona_goal,
+            "level": persona_level,
+            "situation": persona_situation,
+            "failed": persona_failed,
+            "fear": persona_fear,
+            "life": persona_life,
+        }
+        # context["persona"] は既に作成済み
+        persona = context["persona"]
+
+
         # --- 記事テーマ ---
         article_main = request.form.get("article_main")
         article_type_select = request.form.get("article_type")
         article_type = request.form.get("article_type_other_input") if article_type_select == "その他" else article_type_select
-
 
         # --- 記事目的・価値 ---
         article_purpose_select = request.form.get("article_purpose")
@@ -47,72 +80,114 @@ def index():
         tone_keywords = request.form.get("tone_keywords")  # 任意
 
         # --- 著者情報 ---
-        author_family_select = request.form.get("author_family")
-        author_family = request.form.get("author_family_other_input") if author_family_select == "その他" else author_family_select
+        author_viewpoint_select = request.form.get("author_viewpoint")
+        author_viewpoint = (
+            request.form.get("author_viewpoint_other_input")
+            if author_viewpoint_select == "その他"
+            else author_viewpoint_select
+        )
+
         author_strengths_select = request.form.get("author_strengths")
-        author_strengths = request.form.get("author_strengths_other_input") if author_strengths_select == "その他" else author_strengths_select
-        # フォームから取得
+        author_strengths = (
+            request.form.get("author_strengths_other_input")
+            if author_strengths_select == "その他"
+            else author_strengths_select
+        )
         author_name = request.form.get("author_name", "")
         author_name_include = request.form.get("author_name_include") == "yes"
 
-        # プロンプトに条件付きで追加
-        prompt = "記事生成のプロンプト本文ここから"
-        if author_name_include and author_name:
-            prompt += f"\n著者名: {author_name}\n"
+        # --- 段落情報取得 ---
+        article_headings_manual = request.form.getlist("article_headings[]")
+        article_headings_auto = request.form.getlist("article_headings_auto[]")
+        article_purposes_raw = request.form.getlist("article_purposes[]")
+        article_methods_raw = request.form.getlist("article_method_suggest[]")
 
-        # --- 段落見出しと手法 ---
-        article_headings_raw = request.form.getlist("article_headings[]")
-        article_methods_raw = request.form.getlist("article_methods[]")
+        # AI/手動切替は手動入力があれば manual、空なら auto
+        article_modes = []
+        article_headings = []
 
-        # クリーンアップ
-        article_headings = [h.strip() for h in article_headings_raw if h and h.strip()]
-        article_methods = [m.strip() for m in article_methods_raw if m and m.strip()]
+        for manual, auto in zip(article_headings_manual, article_headings_auto):
+            if manual.strip():
+                article_headings.append(manual.strip())
+                article_modes.append("manual")
+            else:
+                article_headings.append(auto.strip() if auto else "")
+                article_modes.append("auto")
 
-        # heading × method のペア化
-        article_sections = [
-            {"heading": h, "method": m}
-            for h, m in zip(article_headings, article_methods)
-        ]
+        article_methods = [m.strip() for m in article_methods_raw]
+        article_purposes = [p.strip() for p in article_purposes_raw]
+
+        # 長さを揃える
+        max_len = max(len(article_headings), len(article_methods), len(article_purposes), len(article_modes))
+        while len(article_headings) < max_len: article_headings.append("")
+        while len(article_methods) < max_len: article_methods.append("")
+        while len(article_purposes) < max_len: article_purposes.append("")
+        while len(article_modes) < max_len: article_modes.append("auto")
+
+        # 段落情報構築
+        article_sections = []
+        for h, p, m, mode in zip(article_headings, article_purposes, article_methods, article_modes):
+            if not h and not p and not m:
+                continue
+            article_sections.append({
+                "heading": h,
+                "purpose": p,
+                "method": m,
+                "mode": mode
+            })
 
         context["article_sections"] = article_sections
 
-
-        # ================================
-        # ▼ プロンプト用：記事の流れを作成
-        # ================================
+        # プロンプト向け article_flow（自然文形式）
         if article_sections:
-            article_flow = "\n".join(
-                [f"{idx+1}. {sec['heading']}（{sec['method']}）"
-                for idx, sec in enumerate(article_sections)]
-            )
+            article_flow_lines = []
+            for idx, sec in enumerate(article_sections):
+                # Mode が manual の場合は実際の見出しを大見出しとして表示
+                if sec["mode"] == "manual" and sec["heading"]:
+                    mode_text = sec["heading"]  # 手動入力した見出しを大見出しとして表示
+                else:
+                    mode_text = "AIでSEO最適生成"  # AI生成の場合の表示
+
+                method_text = sec["method"] or "記事全体設定に従う"
+                purpose_text = sec["purpose"] or "-"
+
+                article_flow_lines.append(
+                    f"{idx+1}. {sec['heading']}\n"
+                    f"   - 段落の役割: {purpose_text}\n"
+                    f"   - 段落生成手法: {method_text}\n"
+                    f"   - 大見出し: {mode_text}"
+                )
+            article_flow = "\n".join(article_flow_lines)
         else:
             article_flow = "指定なし"
 
         context["article_flow"] = article_flow
 
         # --- 補助情報 ---
-        constraint_length = request.form.get("constraint_length")
-        constraint_forbidden = request.form.get("constraint_forbidden")
-        constraint_seo = request.form.get("constraint_seo")
-        extra_reference = request.form.getlist("extra_reference[]")  # 複数URL対応
-        structure_hint = request.form.get("structure_hint")  # 任意
+        constraint_length = request.form.get("constraint_length", "")
+        constraint_forbidden = request.form.get("constraint_forbidden", "")
+        constraint_seo = request.form.get("constraint_seo", "").strip()
 
-        # --- 任意補助情報 ---
-        must_include = request.form.get("must_include")
-        avoid_tone = request.form.get("avoid_tone")
+        search_intent = request.form.get("search_intent", "")
+        search_intent_other = request.form.get("search_intent_other", "").strip()
+        if search_intent == "other" and search_intent_other:
+            search_intent = search_intent_other
 
-        # 元のプロンプトの著者情報部分
+        must_include = request.form.get("must_include", "")
+        avoid_tone = request.form.get("avoid_tone", "")
+
+        # extra_reference は未定義だとエラーになるので安全に初期化
+        extra_reference = request.form.getlist("extra_reference") if "extra_reference" in request.form else []
+
+        # --- 著者情報ブロック ---
         author_info_block = f"""
 【著者情報】
-- 家族構成: {author_family}
-- アピールポイント・経験: {author_strengths}
+- 記事の視点: {author_viewpoint}
+- 著者の強み: {author_strengths}
 - 著者名: {author_name}
 """
-
-        # 「いいえ」の場合はブロック自体を消す
-        if author_name_include != 1:
+        if not author_name_include:
             author_info_block = "※著者情報は書かないでください" 
-
 
         # --- プロンプト生成 ---
         prompt = f"""
@@ -122,15 +197,24 @@ def index():
 ・AIDAモデル：Attention→Interest→Desire→Action
 ・具体例・箇条書き活用：視覚的にわかりやすく、実用的に
 
+{author_info_block}
+
 【ペルソナ（読者像）】
-- 年齢: {persona_age}
-- 性別: {persona_gender}
-- 職業: {persona_job}
-- 趣味・興味: {persona_hobby}
-- 読者の悩み: {persona_pain}
-- 読者のゴール: {persona_goal}
-読者心理を3ステップで把握：①現状の課題、②理想の状態、③それを妨げる障壁
-段落ごとに「読者が抱く共感・疑問・行動意欲」を意識してください。
+- 年齢: {persona['age']}
+- 性別: {persona['gender']}
+- 職業: {persona['job']}
+- 趣味・興味: {persona['hobby']}
+- 読者の悩み: {persona['pain']}
+- 読者のゴール: {persona['goal']}
+- 知識レベル: {persona['level']}
+- 現在の状況: {persona['situation']}
+- 過去の失敗経験: {persona['failed']}
+- 恐れていること: {persona['fear']}
+- 生活スタイル: {persona['life']}
+
+【SEO】
+- 想定検索意図: {search_intent}
+- SEOキーワード: {constraint_seo}
 
 【記事テーマ】
 - 主題: {article_main}
@@ -140,24 +224,13 @@ def index():
 - 読者に伝えたいこと: {article_purpose}
 - 補足（任意）: {article_value}
 - CTA: {article_cta}
-PREP法を段落単位で活用：
-Point：主張
-Reason：理由
-Example：具体例
-Point：再確認
-読者が次の段落を読みたくなる「興味のフック」を導入段落で作ってください。
 
 【トーン・文体】
 - スタイル: {tone_style}
 - 補足: {tone_keywords}
 
-{author_info_block}
-
 【記事の大まかな流れ】
 {article_flow}
-
-
-
 
 【補助情報】
 - 文字量: {constraint_length}
@@ -183,22 +256,12 @@ Point：再確認
 5. 各段落は起承転結を意識して論理的かつ具体的に書くこと。
 6. 導入（読者の共感を引く部分）から始めてください。
 7. 既に生成した段落がある場合は、その内容を渡して文脈を保持しつつ次の段落を生成してください。
-8. 段落ごとにCTAや読者への気づきが自然に含まれるようにしてください。
+8. 段落ごとにCTAや読者への気づきが自然に含まれるようにしてください。CTAの直接的な表現はしないように。
 9. 禁止ワードを絶対に使用しないでください。
 10. 各段落を生成したら、その段落だけを出力してください。次の段落は別で生成してください。
 11. 段落生成後、コピーして順番に貼り付けるだけで記事完成できる設計にしてください。
-
-
-【出力フォーマット例】
-# 大見出し
-本文の内容がここに入ります。  
-
----
-
-# 次の大見出し
-次の段落の内容をここに書きます。  
 """
-        context["prompt"] = prompt  # ← これが絶対必要！
+        context["prompt"] = prompt  # ← 必須
         return render_template("result.html", **context)
 
     # GET のときは空の context で index.html
