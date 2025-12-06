@@ -96,26 +96,45 @@ def index():
         author_name = request.form.get("author_name", "")
         author_name_include = request.form.get("author_name_include") == "yes"
 
+        # --- 記事全体の文章構成（フレームワーク） ---
+        # フォームで選択されたラジオボタンの値（フル表記）を取得
+        framework = request.form.get(
+            "framework",
+            "生成段階でAIが最適構成を判断"  # デフォルト値
+        )
+
         # --- 段落情報取得 ---
         article_headings_manual = request.form.getlist("article_headings[]")
         article_headings_auto = request.form.getlist("article_headings_auto[]")
         article_purposes_raw = request.form.getlist("article_purposes[]")
         article_methods_raw = request.form.getlist("article_method_suggest[]")
 
-        # AI/手動切替は手動入力があれば manual、空なら auto
+        # --- AI/手動切替 ---
         article_modes = []
         article_headings = []
 
         for manual, auto in zip(article_headings_manual, article_headings_auto):
-            if manual.strip():
-                article_headings.append(manual.strip())
+            if manual.strip():  # 手動入力があれば manual
                 article_modes.append("manual")
-            else:
-                article_headings.append(auto.strip() if auto else "")
+                article_headings.append(manual.strip())
+            else:  # 空なら auto
                 article_modes.append("auto")
+                article_headings.append(auto.strip())
 
-        article_methods = [m.strip() for m in article_methods_raw]
+        # article_purposes_raw はそのまま利用可能
         article_purposes = [p.strip() for p in article_purposes_raw]
+
+        # --- 段落生成手法をフル表記に変換 ---
+        method_fullname_map = {
+            "story": "ストーリーテリング法：導入→葛藤→解決→結論の流れ",
+            "prep": "PREP法：Point→Reason→Example→Point",
+            "aida": "AID法：Attention→Interest→Desire→Action",
+            "bullet": "箇条書き"
+        }
+
+        article_methods = [
+            method_fullname_map.get(m.strip(), "記事全体の設定に従う") for m in article_methods_raw
+        ]
 
         # 長さを揃える
         max_len = max(len(article_headings), len(article_methods), len(article_purposes), len(article_modes))
@@ -191,11 +210,7 @@ def index():
 
         # --- プロンプト生成 ---
         prompt = f"""
-あなたは高度なコンテンツクリエイター兼note編集者です。読者に価値あるnote記事を段落ごとに順番に生成してください。生成にあたっては以下の専門手法を意識してください：
-・ストーリーテリング法：導入→葛藤→解決→結論の流れ
-・PREP法：Point→Reason→Example→Point
-・AIDAモデル：Attention→Interest→Desire→Action
-・具体例・箇条書き活用：視覚的にわかりやすく、実用的に
+あなたは高度なコンテンツクリエイター兼note編集者です。読者に価値あるnote記事を段落ごとに順番に生成してください。
 
 {author_info_block}
 
@@ -229,7 +244,12 @@ def index():
 - スタイル: {tone_style}
 - 補足: {tone_keywords}
 
+
+
 【記事の大まかな流れ】
+- 全体構成: {framework}
+
+- 段落情報:
 {article_flow}
 
 【補助情報】
@@ -260,6 +280,16 @@ def index():
 9. 禁止ワードを絶対に使用しないでください。
 10. 各段落を生成したら、その段落だけを出力してください。次の段落は別で生成してください。
 11. 段落生成後、コピーして順番に貼り付けるだけで記事完成できる設計にしてください。
+
+
+【出力フォーマット例】
+# 大見出し
+本文の内容がここに入ります。  
+
+---
+
+# 次の大見出し
+次の段落の内容をここに書きます。  
 """
         context["prompt"] = prompt  # ← 必須
         return render_template("result.html", **context)

@@ -86,179 +86,230 @@
 
 
 
- <!-- ペルソナ -->
-<div class="section">
-    <h2>ペルソナ（記事の読者像） <span class="required">必須</span></h2>
+<!-- ペルソナ -->
+<div class="section" style="padding: 20px; max-width: 800px; margin: auto; font-family: sans-serif; line-height: 1.6;">
+    <h2 style="border-bottom: 2px solid #ccc; padding-bottom: 10px;">ペルソナ（記事の読者像） <span class="required" style="color: red;">必須</span></h2>
+
+    <style>
+        .persona-block {
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .persona-block label {
+            font-weight: bold;
+        }
+        .persona-block select, 
+        .persona-block input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .persona-block .hidden {
+            margin-top: 5px;
+        }
+    </style>
 
     <!-- 年齢 -->
-    <label class="required">読者の年齢層（想定読者が最も多い層）:</label>
-    <select name="persona_age" onchange="toggleOther(this,'persona_age_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="10代">10代</option>
-        <option value="20代">20代</option>
-        <option value="30代">30代</option>
-        <option value="40代">40代</option>
-        <option value="50代以上">50代以上</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_age_other" class="hidden"><input type="text" name="persona_age_other_input" placeholder="具体的な年齢層"></div>
+    <div class="persona-block">
+        <label class="required">読者の年齢層（最も多い層）:</label>
+        <select name="persona_age" onchange="toggleOther(this,'persona_age_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="10代">10代</option>
+            <option value="20代">20代</option>
+            <option value="30代">30代</option>
+            <option value="40代">40代</option>
+            <option value="50代以上">50代以上</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_age_other" class="hidden">
+            <input type="text" name="persona_age_other_input" placeholder="具体的な年齢層">
+        </div>
+    </div>
 
     <!-- 性別 -->
-    <label class="required">読者の性別（記事を書くうえで考慮すべき層）:</label>
-    <select name="persona_gender" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="男性">男性</option>
-        <option value="女性">女性</option>
-        <option value="その他">その他（多様な性別）</option>
-        <option value="無回答">無回答（性別を限定しない）</option>
-    </select>
+    <div class="persona-block">
+        <label class="required">読者の性別（記事作成時の考慮）:</label>
+        <select name="persona_gender" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="男性">男性</option>
+            <option value="女性">女性</option>
+            <option value="その他">その他（多様な性別）</option>
+            <option value="無回答">無回答（性別を限定しない）</option>
+        </select>
+    </div>
 
     <!-- 職業 -->
-    <label class="required">読者の主な属性・職業（検索意図の判断に重要）:</label>
-    <select name="persona_job" onchange="toggleOther(this,'persona_job_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="学生">学生</option>
-        <option value="会社員">会社員／社会人</option>
-        <option value="フリーランス／副業">フリーランス／副業</option>
-        <option value="公務員">公務員</option>
-        <option value="主婦／主夫">主婦／主夫</option>
-        <option value="クリエイター／ライター">クリエイター／ライター</option>
-        <option value="ITエンジニア">ITエンジニア／技術職</option>
-        <option value="心理学者">心理学者</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_job_other" class="hidden"><input type="text" name="persona_job_other_input" placeholder="具体的な職業"></div>
+    <div class="persona-block">
+        <label class="required">読者の職業・属性（検索意図判断に重要）:</label>
+        <select name="persona_job" onchange="toggleOther(this,'persona_job_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="学生">学生</option>
+            <option value="会社員">会社員／社会人</option>
+            <option value="フリーランス／副業">フリーランス／副業</option>
+            <option value="公務員">公務員</option>
+            <option value="主婦／主夫">主婦／主夫</option>
+            <option value="クリエイター／ライター">クリエイター／ライター</option>
+            <option value="ITエンジニア">ITエンジニア／技術職</option>
+            <option value="心理学者">心理学者</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_job_other" class="hidden">
+            <input type="text" name="persona_job_other_input" placeholder="具体的な職業">
+        </div>
+    </div>
 
     <!-- 興味・趣味 -->
-    <label class="required">読者が普段興味を持っているテーマ（文章の切り口に反映）:</label>
-    <select name="persona_hobby" onchange="toggleOther(this,'persona_hobby_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="読書">読書</option>
-        <option value="プログラミング">プログラミング</option>
-        <option value="副業">副業</option>
-        <option value="投資・お金">投資・お金</option>
-        <option value="健康・ダイエット">健康・ダイエット</option>
-        <option value="メンタルヘルス／セルフケア">メンタルヘルス／セルフケア</option>
-        <option value="学習／資格">学習／資格</option>
-        <option value="ライフスタイル改善">ライフスタイル改善</option>
-        <option value="旅行／ライフログ">旅行／ライフログ</option>
-        <option value="心理学">心理学</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_hobby_other" class="hidden"><input type="text" name="persona_hobby_other_input" placeholder="興味・趣味を具体的に入力"></div>
+    <div class="persona-block">
+        <label class="required">読者が普段興味を持つテーマ:</label>
+        <select name="persona_hobby" onchange="toggleOther(this,'persona_hobby_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="読書">読書</option>
+            <option value="プログラミング">プログラミング</option>
+            <option value="副業">副業</option>
+            <option value="投資・お金">投資・お金</option>
+            <option value="健康・ダイエット">健康・ダイエット</option>
+            <option value="メンタルヘルス／セルフケア">メンタルヘルス／セルフケア</option>
+            <option value="学習／資格">学習／資格</option>
+            <option value="ライフスタイル改善">ライフスタイル改善</option>
+            <option value="旅行／ライフログ">旅行／ライフログ</option>
+            <option value="心理学">心理学</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_hobby_other" class="hidden">
+            <input type="text" name="persona_hobby_other_input" placeholder="興味・趣味を具体的に入力">
+        </div>
+    </div>
 
     <!-- 悩み -->
-    <label class="required">読者が今抱えている「最も大きな悩み」:</label>
-    <select name="persona_pain" onchange="toggleOther(this,'persona_pain_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="時間がない／忙しい">時間がない／忙しい（時短ニーズ）</option>
-        <option value="スキルが足りない">スキル不足（学習ニーズ）</option>
-        <option value="モチベーション維持が難しい">モチベ維持が難しい</option>
-        <option value="健康・体調管理">健康・体調管理の悩み</option>
-        <option value="将来の不安／キャリア">キャリア不安（転職・将来）</option>
-        <option value="習慣化できない">習慣化できない</option>
-        <option value="情報が多すぎる／整理したい">情報が多すぎて整理できない</option>
-        <option value="自己肯定感が低い">自己肯定感が低い</option>
-        <option value="ストレス軽減したい">ストレスを減らしたい</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_pain_other" class="hidden"><input type="text" name="persona_pain_other_input" placeholder="悩みを具体的に入力"></div>
+    <div class="persona-block">
+        <label class="required">読者の現在の悩み（最も大きな課題）:</label>
+        <select name="persona_pain" onchange="toggleOther(this,'persona_pain_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="時間がない／忙しい">時間がない／忙しい（時短ニーズ）</option>
+            <option value="スキルが足りない">スキル不足（学習ニーズ）</option>
+            <option value="モチベーション維持が難しい">モチベ維持が難しい</option>
+            <option value="健康・体調管理">健康・体調管理の悩み</option>
+            <option value="将来の不安／キャリア">キャリア不安（転職・将来）</option>
+            <option value="習慣化できない">習慣化できない</option>
+            <option value="情報が多すぎる／整理したい">情報が多すぎて整理できない</option>
+            <option value="自己肯定感が低い">自己肯定感が低い</option>
+            <option value="ストレス軽減したい">ストレスを減らしたい</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_pain_other" class="hidden">
+            <input type="text" name="persona_pain_other_input" placeholder="悩みを具体的に入力">
+        </div>
+    </div>
 
     <!-- ゴール -->
-    <label class="required">読者がこの記事を読む目的（達成したい未来）:</label>
-    <select name="persona_goal" onchange="toggleOther(this,'persona_goal_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="スキルアップ／資格取得">スキルアップ／資格取得</option>
-        <option value="副業を始めたい">副業を始めたい</option>
-        <option value="習慣化したい">習慣化したい</option>
-        <option value="健康を維持／改善したい">健康維持・改善</option>
-        <option value="人生の方向性を見つけたい">人生の方向性を見つけたい</option>
-        <option value="時間を有効活用したい">時間の有効活用</option>
-        <option value="経済的余裕を得たい">経済的余裕を得たい</option>
-        <option value="自己理解を深めたい">自己理解を深めたい</option>
-        <option value="精神的に安定したい">精神的な安定</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_goal_other" class="hidden"><input type="text" name="persona_goal_other_input" placeholder="ゴールを具体的に入力"></div>
-
-        <!-- 追加項目：読者の知識レベル -->
-    <label class="required">読者の知識レベル（記事の難易度調整に使用）:</label>
-    <select name="persona_level" onchange="toggleOther(this,'persona_level_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="初心者（基礎から知りたい）">初心者（基礎から知りたい）</option>
-        <option value="中級者（ある程度経験あり）">中級者（ある程度経験あり）</option>
-        <option value="上級者（専門的な内容を求めている）">上級者（専門的な内容を求めている）</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_level_other" class="hidden">
-        <input type="text" name="persona_level_other_input" placeholder="知識レベルを具体的に入力">
+    <div class="persona-block">
+        <label class="required">読者がこの記事を読む目的（達成したい未来）:</label>
+        <select name="persona_goal" onchange="toggleOther(this,'persona_goal_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="スキルアップ／資格取得">スキルアップ／資格取得</option>
+            <option value="副業を始めたい">副業を始めたい</option>
+            <option value="習慣化したい">習慣化したい</option>
+            <option value="健康を維持／改善したい">健康維持・改善</option>
+            <option value="人生の方向性を見つけたい">人生の方向性を見つけたい</option>
+            <option value="時間を有効活用したい">時間の有効活用</option>
+            <option value="経済的余裕を得たい">経済的余裕を得たい</option>
+            <option value="自己理解を深めたい">自己理解を深めたい</option>
+            <option value="精神的に安定したい">精神的な安定</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_goal_other" class="hidden">
+            <input type="text" name="persona_goal_other_input" placeholder="ゴールを具体的に入力">
+        </div>
     </div>
 
-
-    <!-- 追加項目：読者の現在の状況 -->
-    <label class="required">読者の現在の状況（読者の行動文脈を合わせるために使用）:</label>
-    <select name="persona_situation" onchange="toggleOther(this,'persona_situation_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="就活／転職活動中">就活／転職活動中</option>
-        <option value="フルタイム勤務で忙しい">フルタイム勤務で忙しい</option>
-        <option value="子育て中で時間が少ない">子育て中で時間が少ない</option>
-        <option value="副業を模索している">副業を模索している</option>
-        <option value="長期的に時間がない状況">長期的に忙しい（慢性的）</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_situation_other" class="hidden">
-        <input type="text" name="persona_situation_other_input" placeholder="状況を具体的に入力">
+    <!-- 知識レベル -->
+    <div class="persona-block">
+        <label class="required">読者の知識レベル（記事難易度調整用）:</label>
+        <select name="persona_level" onchange="toggleOther(this,'persona_level_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="初心者（基礎から知りたい）">初心者（基礎から知りたい）</option>
+            <option value="中級者（ある程度経験あり）">中級者（ある程度経験あり）</option>
+            <option value="上級者（専門的な内容を求めている）">上級者（専門的な内容を求めている）</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_level_other" class="hidden">
+            <input type="text" name="persona_level_other_input" placeholder="知識レベルを具体的に入力">
+        </div>
     </div>
 
-
-    <!-- 追加項目：過去の失敗経験 -->
-    <label class="required">読者が過去に試したが続かなかった／失敗したこと:</label>
-    <select name="persona_failed" onchange="toggleOther(this,'persona_failed_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="継続できなかった">継続できなかった</option>
-        <option value="行動したが成果が出なかった">行動したが成果が出なかった</option>
-        <option value="情報が多く混乱した">情報が多く混乱した</option>
-        <option value="何から始めればいいか分からなかった">何から始めればいいか分からなかった</option>
-        <option value="特に行動していない">特に行動していない</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_failed_other" class="hidden">
-        <input type="text" name="persona_failed_other_input" placeholder="失敗内容を具体的に入力">
+    <!-- 現在の状況 -->
+    <div class="persona-block">
+        <label class="required">読者の現在の状況（行動文脈用）:</label>
+        <select name="persona_situation" onchange="toggleOther(this,'persona_situation_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="就活／転職活動中">就活／転職活動中</option>
+            <option value="フルタイム勤務で忙しい">フルタイム勤務で忙しい</option>
+            <option value="子育て中で時間が少ない">子育て中で時間が少ない</option>
+            <option value="副業を模索している">副業を模索している</option>
+            <option value="長期的に時間がない状況">長期的に忙しい（慢性的）</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_situation_other" class="hidden">
+            <input type="text" name="persona_situation_other_input" placeholder="状況を具体的に入力">
+        </div>
     </div>
 
-
-    <!-- 追加項目：読者が恐れていること -->
-    <label class="required">読者が最も恐れていること（不安の核心）:</label>
-    <select name="persona_fear" onchange="toggleOther(this,'persona_fear_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="このまま成長できないこと">このまま成長できない</option>
-        <option value="時間だけが浪費されること">時間だけが溶ける</option>
-        <option value="周りに取り残されること">周りに置いていかれる</option>
-        <option value="お金の不安が続くこと">お金の不安が続く</option>
-        <option value="努力が報われないこと">努力が無駄になる</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_fear_other" class="hidden">
-        <input type="text" name="persona_fear_other_input" placeholder="不安を具体的に入力">
+    <!-- 過去の失敗経験 -->
+    <div class="persona-block">
+        <label class="required">過去に試したが続かなかった／失敗したこと:</label>
+        <select name="persona_failed" onchange="toggleOther(this,'persona_failed_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="継続できなかった">継続できなかった</option>
+            <option value="行動したが成果が出なかった">行動したが成果が出なかった</option>
+            <option value="情報が多く混乱した">情報が多く混乱した</option>
+            <option value="何から始めればいいか分からなかった">何から始めればいいか分からなかった</option>
+            <option value="特に行動していない">特に行動していない</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_failed_other" class="hidden">
+            <input type="text" name="persona_failed_other_input" placeholder="失敗内容を具体的に入力">
+        </div>
     </div>
 
-
-    <!-- 追加項目：生活スタイル -->
-    <label class="required">読者の生活スタイル（記事の現実的な提案に必要）:</label>
-    <select name="persona_life" onchange="toggleOther(this,'persona_life_other')" required>
-        <option value="" selected disabled>選択してください</option>
-        <option value="フルタイム勤務">フルタイム勤務</option>
-        <option value="パート・アルバイト勤務">パート・アルバイト勤務</option>
-        <option value="夜型の生活">夜型の生活</option>
-        <option value="朝型の生活">朝型の生活</option>
-        <option value="週末にしか時間が取れない">週末だけ時間が取れる</option>
-        <option value="1日30分なら時間が作れる">1日30分なら作業可能</option>
-        <option value="その他">その他（具体的に入力）</option>
-    </select>
-    <div id="persona_life_other" class="hidden">
-        <input type="text" name="persona_life_other_input" placeholder="生活スタイルを具体的に入力">
+    <!-- 恐れていること -->
+    <div class="persona-block">
+        <label class="required">読者が最も恐れていること（不安の核心）:</label>
+        <select name="persona_fear" onchange="toggleOther(this,'persona_fear_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="このまま成長できないこと">このまま成長できない</option>
+            <option value="時間だけが浪費されること">時間だけが溶ける</option>
+            <option value="周りに取り残されること">周りに置いていかれる</option>
+            <option value="お金の不安が続くこと">お金の不安が続く</option>
+            <option value="努力が報われないこと">努力が無駄になる</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_fear_other" class="hidden">
+            <input type="text" name="persona_fear_other_input" placeholder="不安を具体的に入力">
+        </div>
     </div>
 
+    <!-- 生活スタイル -->
+    <div class="persona-block" style="margin-bottom: 20px;">
+        <label class="required">読者の生活スタイル（現実的提案のため）:</label>
+        <select name="persona_life" onchange="toggleOther(this,'persona_life_other')" required>
+            <option value="" selected disabled>選択してください</option>
+            <option value="フルタイム勤務">フルタイム勤務</option>
+            <option value="パート・アルバイト勤務">パート・アルバイト勤務</option>
+            <option value="夜型の生活">夜型の生活</option>
+            <option value="朝型の生活">朝型の生活</option>
+            <option value="週末にしか時間が取れない">週末だけ時間が取れる</option>
+            <option value="1日30分なら時間が作れる">1日30分なら作業可能</option>
+            <option value="その他">その他（具体的に入力）</option>
+        </select>
+        <div id="persona_life_other" class="hidden">
+            <input type="text" name="persona_life_other_input" placeholder="生活スタイルを具体的に入力">
+        </div>
+    </div>
 </div>
 
 
@@ -368,19 +419,19 @@
     </label>
 
     <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="story" checked>
+        <input type="radio" name="framework" value="ストーリーテリング法：導入→葛藤→解決→結論の流れ" checked>
         <strong>ストーリーテリング</strong>
         <span style="color:#555; font-size:13px;">（導入 → 葛藤 → 解決 → 結論で読みやすさUP）</span>
     </label>
 
     <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="prep">
+        <input type="radio" name="framework" value="PREP法：Point→Reason→Example→Point">
         <strong>PREP法</strong>
         <span style="color:#555; font-size:13px;">（結論 → 理由 → 具体例 → 再結論、ロジカルに伝わる）</span>
     </label>
 
     <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="aida">
+        <input type="radio" name="framework" value="AID法：Attention→Interest→Desire→Action">
         <strong>AIDA</strong>
         <span style="color:#555; font-size:13px;">
             （Attention → Interest → Desire → Action、行動につながる文章）
@@ -388,7 +439,7 @@
     </label>
 
     <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="none">
+        <input type="radio" name="framework" value="生成段階でAIが最適構成を判断">
         <strong>指定なし</strong>
         <span style="color:#555; font-size:13px;">（生成段階でAIが最適構成を判断）</span>
     </label>
