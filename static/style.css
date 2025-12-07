@@ -207,6 +207,35 @@ input.other-input {
     display: none;
 }
 
+
+/* ドラッグハンドルボタン風 */
+.drag-handle {
+    background: linear-gradient(135deg, #d6d5e2, #c5c2ef);
+    color: rgb(30, 26, 26);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    cursor: grab;
+    user-select: none;
+    display: inline-block;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.drag-handle:hover {
+    background: linear-gradient(135deg, #d6d5e2, #c5c2ef);
+    transform: translateY(-2px);
+}
+
+/* ドラッグ中の見た目 */
+.sortable-ghost {
+    opacity: 0.5;
+    border: 2px dashed #cfcdef;
+    background: #f0f0ff;
+}
+
+
 /* ===== スマホ対応 ===== */
 @media (max-width: 768px) {
     .persona-block {
@@ -214,3 +243,4 @@ input.other-input {
         margin: 0 0 20px 0;
     }
 }
+

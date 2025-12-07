@@ -365,7 +365,6 @@
 <div class="section">
     <h2>段落テンプレート（ドラッグ＆自由編集対応）</h2>
 
-    <!-- どのテンプレか明示 -->
     <label style="font-weight:600; margin-bottom:4px; display:block;">
         使用するテンプレートを選択
     </label>
@@ -384,44 +383,43 @@
         各ステップでは「AI自動生成」と「手動」を切り替え可能です。
     </p>
 
-    <!-- 記事全体の生成方針（単一選択） -->
-<div style="
-    margin:12px 0;
-    padding:12px;
-    border:1px dashed #ddd;
-    border-radius:6px;
-    background:#fff;
-">
-    <label style="font-weight:600; display:block; margin-bottom:6px;">
-        記事全体の文章構成（どれか1つ選択）
-    </label>
+    <div style="
+        margin:12px 0;
+        padding:12px;
+        border:1px dashed #ddd;
+        border-radius:6px;
+        background:#fff;
+    ">
+        <label style="font-weight:600; display:block; margin-bottom:6px;">
+            記事全体の文章構成（どれか1つ選択）
+        </label>
 
-    <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="ストーリーテリング法：導入→葛藤→解決→結論の流れ" checked>
-        <strong>ストーリーテリング</strong>
-        <span style="color:#555; font-size:13px;">（導入 → 葛藤 → 解決 → 結論で読みやすさUP）</span>
-    </label>
+        <label style="display:block; margin:6px 0;">
+            <input type="radio" name="framework" value="ストーリーテリング法：導入→葛藤→解決→結論の流れ" checked>
+            <strong>ストーリーテリング</strong>
+            <span style="color:#555; font-size:13px;">（導入 → 葛藤 → 解決 → 結論で読みやすさUP）</span>
+        </label>
 
-    <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="PREP法：Point→Reason→Example→Point">
-        <strong>PREP法</strong>
-        <span style="color:#555; font-size:13px;">（結論 → 理由 → 具体例 → 再結論、ロジカルに伝わる）</span>
-    </label>
+        <label style="display:block; margin:6px 0;">
+            <input type="radio" name="framework" value="PREP法：Point→Reason→Example→Point">
+            <strong>PREP法</strong>
+            <span style="color:#555; font-size:13px;">（結論 → 理由 → 具体例 → 再結論、ロジカルに伝わる）</span>
+        </label>
 
-    <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="AID法：Attention→Interest→Desire→Action">
-        <strong>AIDA</strong>
-        <span style="color:#555; font-size:13px;">
-            （Attention → Interest → Desire → Action、行動につながる文章）
-        </span>
-    </label>
+        <label style="display:block; margin:6px 0;">
+            <input type="radio" name="framework" value="AID法：Attention→Interest→Desire→Action">
+            <strong>AIDA</strong>
+            <span style="color:#555; font-size:13px;">
+                （Attention → Interest → Desire → Action、行動につながる文章）
+            </span>
+        </label>
 
-    <label style="display:block; margin:6px 0;">
-        <input type="radio" name="framework" value="生成段階でAIが最適構成を判断">
-        <strong>指定なし</strong>
-        <span style="color:#555; font-size:13px;">（生成段階でAIが最適構成を判断）</span>
-    </label>
-</div>
+        <label style="display:block; margin:6px 0;">
+            <input type="radio" name="framework" value="生成段階でAIが最適構成を判断">
+            <strong>指定なし</strong>
+            <span style="color:#555; font-size:13px;">（生成段階でAIが最適構成を判断）</span>
+        </label>
+    </div>
 
     <div id="steps_container"></div>
 
@@ -430,6 +428,9 @@
         <button type="button" id="auto_fill_btn">テンプレから自動反映</button>
     </div>
 </div>
+
+<!-- SortableJSライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
 <script>
 // =========================
@@ -444,7 +445,6 @@ const stepTemplates = {
     other: []
 };
 
-// ▼ Purpose 選択肢
 const stepPurposes = [
     { value:"hook", label:"Hook（注意喚起）" },
     { value:"problem", label:"Problem（課題）" },
@@ -456,7 +456,6 @@ const stepPurposes = [
     { value:"summary", label:"Summary（まとめ）" }
 ];
 
-// ▼ 静的 Purpose 配列（テンプレごと）
 const stepPurposesStatic = {
     howto: ["hook","insight","howto","howto","howto","howto","example","pitfall","summary"],
     analysis: ["hook","insight","insight","insight","howto","howto","pitfall","summary"],
@@ -472,7 +471,7 @@ const addStepBtn = document.getElementById("add_step_btn");
 const autoFillBtn = document.getElementById("auto_fill_btn");
 
 // =========================
-// ▼ ステップ追加（AI/手動切替・修正版）
+// ▼ ステップ追加（AI/手動切替・ドラッグ対応）
 // =========================
 function addStep(title="", purpose="") {
     const uid = crypto.randomUUID();
@@ -485,9 +484,11 @@ function addStep(title="", purpose="") {
         margin:14px 0;
         border-radius:6px;
         background:#fafafa;
+        cursor: grab;
     `;
 
     wrap.innerHTML = `
+        <div class="drag-handle" style="font-weight:600; cursor:grab; margin-bottom:6px;">☰ 段落をドラッグして並び替え</div>
         <label style="font-size:13px;font-weight:600;">① 段落見出し（AI自動／手動）</label>
         <div style="margin-top:6px;">
             <label><input type="radio" name="mode_${uid}" value="auto" checked> AIで生成する</label>
@@ -560,7 +561,18 @@ autoFillBtn.onclick = () => {
 // ▼ 手動追加ボタン
 // =========================
 addStepBtn.onclick = () => addStep("", "");
+
+// =========================
+// ▼ ドラッグ並び替え（SortableJS）
+// =========================
+Sortable.create(stepsContainer, {
+    animation: 150,
+    handle: ".drag-handle",   // ハンドル部分だけでドラッグ
+    ghostClass: "sortable-ghost"
+});
 </script>
+
+
 
 
 

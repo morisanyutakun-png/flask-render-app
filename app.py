@@ -298,6 +298,4 @@ def index():
 
 
 if __name__ == "__main__":
-    # Render 用に外部アクセス & ポート指定
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)  # 外部アクセス可能に
+    app.run(debug=True)
